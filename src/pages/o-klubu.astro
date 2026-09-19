@@ -2,8 +2,25 @@
 import Base from '../layouts/Base.astro';
 import Zahlavi from '../components/Zahlavi.astro';
 import Prilohy from '../components/Prilohy.astro';
+import Obrazek from '../components/Obrazek.astro';
 import { site, spravniRada } from '../data/site';
+
+const cinnost = [
+  {
+    nadpis: 'Zahraniční exkurze',
+    text: 'Akreditovaný program „Nové trendy ve vedení škol a školských zařízení“: návštěvy škol, workshopy s jejich vedením a srovnání vzdělávacích systémů – od Daruvaru po Lublaň.',
+  },
+  {
+    nadpis: 'Semináře',
+    text: 'Aktuální otázky řízení škol a školských zařízení s lektory z praxe, například k novému občanskému zákoníku nebo zákonu o pedagogických pracovnících.',
+  },
+  {
+    nadpis: 'Setkávání',
+    text: 'Valné hromady, vánoční posezení a výroční shromáždění. Zápisy ze všech jednání zveřejňujeme od roku 2012.',
+  },
+];
 ---
+
 <Base titulek="O klubu" popis="Kdo jsme, co děláme a kdo Klub Komenský vede. Sdružení pracovníků školství z Brna a okolí.">
   <Zahlavi nadpis="O klubu" uvod="Aktivní sdružení pracovníků školství z Brna a okolí. Podporujeme se navzájem – v profesi i mezi lidmi." />
 
@@ -31,16 +48,36 @@ import { site, spravniRada } from '../data/site';
         </p>
       </div>
     </div>
+
+    <div class="obal cinnost">
+      {cinnost.map((c) => (
+        <div>
+          <h3>{c.nadpis}</h3>
+          <p>{c.text}</p>
+        </div>
+      ))}
+    </div>
   </section>
 
   <section class="sekce sekce-vyssi" id="spravni-rada">
     <div class="obal dvoje">
-      <h2>Správní rada</h2>
+      <div>
+        <h2>Správní rada</h2>
+        <p class="pozn">Klub vedou lidé z mateřských a základních škol v Brně a okolí.</p>
+      </div>
       <ul class="rada">
-        {spravniRada.map((c) => (
+        {spravniRada.map((c, i) => (
           <li>
+            <Obrazek
+              src={`/obrazky/rada/${i + 1}.jpg`}
+              alt={`${c.jmeno} – portrét`}
+              popis="Portrét 400 × 400 px"
+              pomer="1 / 1"
+              kruh
+            />
             <span class="jmeno">{c.jmeno}</span>
-            <span class="udaj">{c.funkce}, {c.pusobiste}</span>
+            <span class="udaj">{c.funkce}</span>
+            <span class="udaj">{c.pusobiste}</span>
           </li>
         ))}
       </ul>
@@ -69,10 +106,20 @@ import { site, spravniRada } from '../data/site';
 
 <style>
   .dvoje { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: clamp(1.5rem, 6vw, 6rem); align-items: start; }
-  .rada { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linka); }
-  .rada li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.2rem 2rem; padding-block: 1.15rem; border-bottom: 1px solid var(--linka); }
-  .rada .jmeno { font-size: 1.6rem; line-height: 1.2; }
-  .udaje { margin: 0 0 2.5rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 2rem; max-width: 46rem; }
+  .pozn { color: var(--text-tlumeny); margin-top: 1.2rem; max-width: 22rem; }
+
+  .cinnost { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: clamp(2rem, 4vw, 4rem); margin-top: clamp(3.5rem, 7vw, 6rem); }
+  .cinnost > div { border-top: 2px solid var(--terakota); padding-top: 1.3rem; }
+  .cinnost h3 { margin-bottom: 0.7rem; }
+  .cinnost p { color: var(--text-tlumeny); font-size: 1.15rem; line-height: 1.55; margin: 0; }
+
+  .rada { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 10.5rem), 1fr)); gap: 2rem 1.5rem; }
+  .rada li { display: grid; gap: 0; }
+  .rada li > :global(.obrazek) { width: 7.5rem; margin-bottom: 1rem; }
+  .rada .jmeno { font-size: 1.45rem; line-height: 1.2; }
+  .rada .udaj:first-of-type { margin-top: 0.3rem; }
+
+  .udaje { margin: 0 0 2.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1.5rem 2rem; max-width: 46rem; }
   .udaje dd { margin: 0.2rem 0 0; font-size: 1.35rem; }
-  @media (max-width: 52rem) { .dvoje { grid-template-columns: 1fr; } .udaje { grid-template-columns: 1fr; } }
+  @media (max-width: 52rem) { .dvoje { grid-template-columns: 1fr; } }
 </style>

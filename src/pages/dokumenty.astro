@@ -2,17 +2,18 @@
 import Base from '../layouts/Base.astro';
 import Zahlavi from '../components/Zahlavi.astro';
 import Prilohy from '../components/Prilohy.astro';
-import { site, zapisy } from '../data/site';
+import { site, zapisy, vyrocniZpravy, pripona } from '../data/site';
 ---
-<Base titulek="Dokumenty a zápisy" popis="Stanovy Klubu Komenský, přihláška za člena a zápisy z valných hromad od roku 2012.">
-  <Zahlavi nadpis="Dokumenty a zápisy" uvod="Stanovy, přihláška za člena a zápisy ze všech valných hromad od roku 2012." />
+<Base titulek="Dokumenty a zápisy" popis="Stanovy Klubu Komenský, přihláška za člena, výroční zprávy a zápisy z valných hromad od roku 2012.">
+  <Zahlavi nadpis="Dokumenty a zápisy" uvod="Stanovy, přihláška za člena, výroční zprávy a zápisy ze všech valných hromad od roku 2012." />
 
   <section class="sekce" id="clenstvi">
     <div class="obal dvoje">
       <div>
         <h2>Členství a stanovy</h2>
         <p class="pozn">
-          Vyplněnou přihlášku pošlete na <a href={`mailto:${site.email}`}>{site.email}</a>.
+          Vyplněnou přihlášku pošlete na <a href={`mailto:${site.email}`}>{site.email}</a>,
+          nebo použijte <a href="/#clenstvi">přihlášku online</a>.
         </p>
       </div>
       <Prilohy polozky={[
@@ -41,7 +42,33 @@ import { site, zapisy } from '../data/site';
     </div>
   </section>
 
-  <section class="sekce">
+  <section class="sekce" id="vyrocni">
+    <div class="obal dvoje">
+      <div>
+        <h2>Výroční zprávy</h2>
+        <p class="pozn">Přehled činnosti a hospodaření spolku za kalendářní rok.</p>
+      </div>
+      {vyrocniZpravy.length > 0 ? (
+        <ul class="soubory">
+          {vyrocniZpravy.map((v) => (
+            <li>
+              <a href={`/soubory/${v.soubor}`} download>
+                <span class="jmeno"><span class="udaj rok">{v.rok}</span>Výroční zpráva</span>
+                <span class="udaj typ">{pripona(v.soubor)}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="pozn sirsi">
+          Výroční zprávy zatím nejsou zveřejněné. Jakmile je klub schválí, najdete je tady
+          ke stažení – <span class="doplnit">doplnit soubory</span>
+        </p>
+      )}
+    </div>
+  </section>
+
+  <section class="sekce sekce-vyssi">
     <div class="obal dvoje">
       <div>
         <h2>Materiály do výuky</h2>
@@ -55,6 +82,7 @@ import { site, zapisy } from '../data/site';
 <style>
   .dvoje { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: clamp(1.5rem, 6vw, 6rem); align-items: start; }
   .pozn { color: var(--text-tlumeny); margin-top: 1.2rem; max-width: 24rem; }
+  .pozn.sirsi { max-width: 40rem; margin-top: 0; }
   .rok { display: inline-block; width: 3.6rem; font-size: 0.95rem; }
   @media (max-width: 52rem) { .dvoje { grid-template-columns: 1fr; } }
 </style>

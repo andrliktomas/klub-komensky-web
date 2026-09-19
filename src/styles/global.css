@@ -1,21 +1,23 @@
 /* Klub Komenský – vizuální systém
-   Les (tmavá zelená) + mosaz + papír. EB Garamond pro čtení a nadpisy, Hanken Grotesk pro navigaci a údaje. */
+   Ořech (tmavě hnědá) + okr + papír – barvy převzaté z původního webu klubu.
+   EB Garamond pro čtení a nadpisy, Hanken Grotesk pro navigaci a údaje. */
 
 :root {
-  --les: #10302a;
-  --les-hluboky: #0a221d;
-  --mosaz: #cba95f;
-  --mosaz-jasna: #e2c98d;
-  --krida: #f6f5ef;
+  --les: #3a1c10;
+  --les-hluboky: #23100a;
+  --mosaz: #d8a85c;
+  --mosaz-jasna: #ecc98f;
+  --krida: #f8f2e8;
+  --terakota: #b5522e;
 
-  --bg: #f2f3ee;
-  --bg-vyssi: #fcfcfa;
-  --text: #15201c;
-  --text-tlumeny: #4a5853;
-  --linka: rgba(21, 32, 28, 0.17);
-  --akcent: #6f5518;
-  --akcent-plocha: #10302a;
-  --akcent-plocha-text: #f6f5ef;
+  --bg: #f5efe6;
+  --bg-vyssi: #fbf7f0;
+  --text: #241512;
+  --text-tlumeny: #5e4a40;
+  --linka: rgba(36, 21, 18, 0.17);
+  --akcent: #a9491f;
+  --akcent-plocha: #3a1c10;
+  --akcent-plocha-text: #f8f2e8;
 
   --serif: 'EB Garamond Variable', 'EB Garamond', Georgia, 'Times New Roman', serif;
   --sans: 'Hanken Grotesk Variable', 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -27,25 +29,25 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #0c1815;
-    --bg-vyssi: #11211d;
-    --text: #e9ebe4;
-    --text-tlumeny: #a3b0aa;
-    --linka: rgba(233, 235, 228, 0.16);
-    --akcent: #d8b96f;
-    --akcent-plocha: #cba95f;
-    --akcent-plocha-text: #0a221d;
+    --bg: #1a0d08;
+    --bg-vyssi: #24140c;
+    --text: #f0e5da;
+    --text-tlumeny: #bda695;
+    --linka: rgba(240, 229, 218, 0.16);
+    --akcent: #e9a06d;
+    --akcent-plocha: #d8a85c;
+    --akcent-plocha-text: #23100a;
   }
 }
 :root[data-theme='dark'] {
-  --bg: #0c1815;
-  --bg-vyssi: #11211d;
-  --text: #e9ebe4;
-  --text-tlumeny: #a3b0aa;
-  --linka: rgba(233, 235, 228, 0.16);
-  --akcent: #d8b96f;
-  --akcent-plocha: #cba95f;
-  --akcent-plocha-text: #0a221d;
+  --bg: #1a0d08;
+  --bg-vyssi: #24140c;
+  --text: #f0e5da;
+  --text-tlumeny: #bda695;
+  --linka: rgba(240, 229, 218, 0.16);
+  --akcent: #e9a06d;
+  --akcent-plocha: #d8a85c;
+  --akcent-plocha-text: #23100a;
 }
 
 *,
@@ -199,7 +201,7 @@ a:hover {
 }
 .na-tmavem .tlacitko-obrys {
   color: var(--krida);
-  border-color: rgba(246, 245, 239, 0.45);
+  border-color: rgba(248, 242, 232, 0.45);
 }
 .odkaz-dal {
   font-family: var(--sans);
@@ -207,12 +209,32 @@ a:hover {
   font-weight: 550;
 }
 
+/* ── Doplnit ────────────────────────────────────────────────
+   Místo pro údaj, který klub teprve dodá. Viditelně odlišené,
+   aby se na webu nikdy netvářilo jako skutečné číslo nebo citace. */
+.doplnit {
+  font-family: var(--sans);
+  font-size: 0.8em;
+  font-weight: 550;
+  letter-spacing: 0.01em;
+  color: var(--text-tlumeny);
+  border: 1px dashed color-mix(in srgb, var(--text-tlumeny) 55%, transparent);
+  border-radius: 2px;
+  padding: 0.1em 0.5em;
+  display: inline-block;
+  font-feature-settings: normal;
+}
+.na-tmavem .doplnit {
+  color: var(--mosaz);
+  border-color: color-mix(in srgb, var(--mosaz) 55%, transparent);
+}
+
 /* ── Tmavé plochy ───────────────────────────────────────── */
 .na-tmavem {
   background: var(--les);
   color: var(--krida);
-  --linka: rgba(246, 245, 239, 0.2);
-  --text-tlumeny: #b4c2bb;
+  --linka: rgba(248, 242, 232, 0.2);
+  --text-tlumeny: #c9b3a3;
   --akcent: var(--mosaz);
   --text: var(--krida);
 }
@@ -279,7 +301,7 @@ a:hover {
   font-weight: 550;
   color: var(--krida);
   background: transparent;
-  border: 1px solid rgba(246, 245, 239, 0.4);
+  border: 1px solid rgba(248, 242, 232, 0.4);
   border-radius: 2px;
   padding: 0.6rem 1rem;
   cursor: pointer;
@@ -342,7 +364,7 @@ a:hover {
 .zahlavi p.uvod {
   font-size: clamp(1.3rem, 2vw, 1.55rem);
   line-height: 1.45;
-  color: #d5ddd7;
+  color: #e6d6c8;
   margin: 1.4rem 0 0;
   max-width: 40rem;
 }
@@ -489,7 +511,7 @@ a.radek:hover h3 {
   line-height: 1.4;
   max-width: 24rem;
   margin: 1.5rem 0 0.5rem;
-  color: #d5ddd7;
+  color: #e6d6c8;
 }
 .paticka h2 {
   font-family: var(--sans);
@@ -498,6 +520,16 @@ a.radek:hover h3 {
   letter-spacing: 0.01em;
   color: var(--text-tlumeny);
   margin-bottom: 1rem;
+}
+.paticka h2.dalsi {
+  margin-top: 2rem;
+}
+.paticka .komensky {
+  width: 100%;
+  max-width: 22rem;
+  height: auto;
+  margin-top: 1.6rem;
+  border: 1px solid var(--linka);
 }
 .paticka ul {
   list-style: none;
@@ -510,7 +542,7 @@ a.radek:hover h3 {
 }
 .paticka a {
   color: var(--krida);
-  text-decoration-color: rgba(246, 245, 239, 0.3);
+  text-decoration-color: rgba(248, 242, 232, 0.3);
 }
 .paticka a:hover {
   color: var(--mosaz-jasna);

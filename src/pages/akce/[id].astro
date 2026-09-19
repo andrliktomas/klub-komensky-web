@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Zahlavi from '../../components/Zahlavi.astro';
 import Prilohy from '../../components/Prilohy.astro';
+import Obrazek from '../../components/Obrazek.astro';
 import galerie from '../../data/galerie.json';
 
 export async function getStaticPaths() {
@@ -41,7 +42,11 @@ const album = a.data.album ? galerie.alba.find((x) => x.slug === a.data.album) :
             <div class="nahledy">
               {album.fotky.slice(0, 6).map((f, i) => (
                 <a href={`/fotogalerie/#${album.slug}`}>
-                  <img src={`/fotky/${f.cil}`} alt={`${album.nazev} ${album.rok} – fotografie ${i + 1}`} loading="lazy" decoding="async" onerror="this.closest('a').classList.add('chybi')" />
+                  <Obrazek
+                    src={`/fotky/${f.cil}`}
+                    alt={`${album.nazev} ${album.rok} – fotografie ${i + 1}`}
+                    popis={`Foto ${i + 1} – 800 × 600 px`}
+                  />
                 </a>
               ))}
             </div>
@@ -59,10 +64,8 @@ const album = a.data.album ? galerie.alba.find((x) => x.slug === a.data.album) :
   .fakta dd { margin: 0.15rem 0 0; font-size: 1.3rem; line-height: 1.3; }
   .blok { margin-top: 3.5rem; }
   h2.maly { font-size: 1.7rem; margin-bottom: 1.2rem; }
-  .nahledy { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 46rem; }
-  .nahledy a { display: block; aspect-ratio: 4 / 3; background: color-mix(in srgb, var(--text) 8%, transparent); overflow: hidden; }
-  .nahledy img { width: 100%; height: 100%; object-fit: cover; }
-  .nahledy a.chybi img { display: none; }
+  .nahledy { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); gap: 0.5rem; max-width: 46rem; }
+  .nahledy a { display: block; }
   @media (max-width: 52rem) {
     .detail { grid-template-columns: 1fr; }
     .fakta { position: static; grid-template-columns: 1fr 1fr; }

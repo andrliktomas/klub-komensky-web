@@ -2,16 +2,48 @@
 import Base from '../layouts/Base.astro';
 import Zahlavi from '../components/Zahlavi.astro';
 import Prilohy from '../components/Prilohy.astro';
+import { site, materialy } from '../data/site';
+
+const popisy: Record<string, string> = {
+  'Občanská válka v USA': 'Výklad s úkoly pro dějepis na 2. stupni ZŠ a řešení pro vyučující.',
+};
+const temata = [...new Set(materialy.map((m) => m.tema))].map((tema) => ({
+  tema,
+  popis: popisy[tema],
+  soubory: materialy.filter((m) => m.tema === tema).map(({ nazev, soubor }) => ({ nazev, soubor })),
+}));
 ---
-<Base titulek="Materiály do výuky" popis="Přípravy a úkoly do výuky ke stažení – Občanská válka v USA.">
-  <Zahlavi nadpis="Materiály do výuky" uvod="Přípravy a úkoly ke stažení." drobecky={[{ href: '/dokumenty/', text: 'Dokumenty' }]} />
+
+<Base titulek="Materiály do výuky" popis="Přípravy a úkoly do výuky ke stažení, které sdílejí členové Klubu Komenský.">
+  <Zahlavi
+    nadpis="Materiály do výuky"
+    uvod="Přípravy a úkoly ke stažení, které sdílejí členové klubu pro kolegy."
+    drobecky={[{ href: '/dokumenty/', text: 'Dokumenty' }]}
+  />
+
   <section class="sekce">
-    <div class="obal">
-      <h2 style="margin-bottom:1.5rem">Občanská válka v USA</h2>
-      <Prilohy polozky={[
-        { nazev: 'Výklad a úkoly k tématu', soubor: 'obcanska-valka-v-usa-vyklad-a-ukoly.docx' },
-        { nazev: 'Řešení úkolů', soubor: 'obcanska-valka-v-usa-reseni.docx' },
-      ]} />
+    <div class="obal seznam">
+      {temata.map((t) => (
+        <div class="tema">
+          <div>
+            <h2>{t.tema}</h2>
+            {t.popis && <p class="pozn">{t.popis}</p>}
+          </div>
+          <Prilohy polozky={t.soubory} />
+        </div>
+      ))}
+      <p class="vyzva">
+        Máte vlastní přípravu, kterou byste rádi sdíleli? Pošlete ji na
+        <a href={`mailto:${site.email}`}>{site.email}</a> – po domluvě ji sem přidáme.
+      </p>
     </div>
   </section>
 </Base>
+
+<style>
+  .seznam { display: grid; gap: clamp(3rem, 6vw, 5rem); }
+  .tema { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: clamp(1.5rem, 6vw, 6rem); align-items: start; }
+  .pozn { color: var(--text-tlumeny); margin-top: 1.2rem; max-width: 24rem; }
+  .vyzva { margin: 0; color: var(--text-tlumeny); max-width: 40rem; }
+  @media (max-width: 52rem) { .tema { grid-template-columns: 1fr; } }
+</style>

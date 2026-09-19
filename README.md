@@ -2,6 +2,10 @@
 
 Statický web v [Astro](https://astro.build). Obsah je v Markdownu, nasazuje se z GitHubu na Cloudflare Pages.
 
+Vizuál vychází z barev původního webu klubu: tmavě hnědá (`#3a1c10`), okr (`#d8a85c`),
+terakota (`#a9491f`) a papír (`#f5efe6`). Barvy jsou na jednom místě v `src/styles/global.css`
+(blok `:root`) – změna se propíše do celého webu včetně mapy, pečeti a záhlaví.
+
 ## Nasazení (GitHub → Cloudflare Pages)
 
 1. Založte na GitHubu prázdný repozitář a nahrajte do něj tuto složku:
@@ -21,10 +25,32 @@ Statický web v [Astro](https://astro.build). Obsah je v Markdownu, nasazuje se 
 ## Fotky a dokumenty ze starého webu
 
 `npm run assets` stáhne 22 dokumentů a 44 fotografií z Webnode do `public/soubory` a `public/fotky`.
-Skript běží i automaticky před každým buildem a přeskakuje, co už existuje.
+Skript běží i automaticky před každým buildem (`prebuild`) a přeskakuje, co už existuje.
 
-**Doporučení:** spusťte ho jednou lokálně a výsledek commitněte. Web pak nebude záviset na tom,
-jestli starý Webnode ještě běží. Seznam souborů: `src/data/soubory.json`, alba: `src/data/galerie.json`.
+**Zatím nejsou v repozitáři.** Prostředí, ve kterém se web převáděl do této podoby, nemělo přístup
+na doménu starého webu (`276551ea95.cbaul-cdnwnd.com`), takže se soubory nestáhly. Na Cloudflare
+se stáhnou při buildu samy. **Doporučení:** spusťte `npm run assets` jednou lokálně a výsledek
+commitněte – web pak nebude záviset na tom, jestli starý Webnode ještě běží.
+Seznam souborů: `src/data/soubory.json`, alba: `src/data/galerie.json`.
+
+Kde fotka chybí, ukáže web rámeček s popisem, co a v jakém rozměru na to místo patří.
+
+## Co ještě doplnit
+
+Na webu jsou místa označená přerušovaným rámečkem „doplnit“. Nejsou tam vymyšlené údaje –
+dokud je nevyplníte, web nic netvrdí. Všechna se vyplňují v `src/data/site.ts`:
+
+| Co | Kde | Poznámka |
+| --- | --- | --- |
+| Počet členů (číslo na úvodu) | `pocetClenu` | ostatní tři čísla se počítají z obsahu webu samy |
+| Ceník členství a exkurzí | `cenik` | doplňte `cena: '300 Kč'` apod. |
+| Ohlasy účastníků | `ohlasy` | `{ text, kdo }`; prázdný seznam = tři prázdná místa |
+| Partneři | `partneri` | `{ nazev, logo }`, logo 480 × 160 px do `public/obrazky/partneri/` |
+| Výroční zprávy | `vyrocniZpravy` | soubor do `public/soubory/` |
+| Portréty správní rady | – | `public/obrazky/rada/1.jpg` … `5.jpg`, 400 × 400 px, v pořadí podle `spravniRada` |
+
+Rubrika „Rok v klubu“ na úvodu (jaro / podzim / prosinec) je psaná obecně podle dosavadní
+historie klubu – zkontrolujte, jestli sedí, případně upravte v `src/pages/index.astro`.
 
 ## Správa obsahu
 
@@ -33,7 +59,8 @@ jestli starý Webnode ještě běží. Seznam souborů: `src/data/soubory.json`,
 | Aktualita (blog) | nový `.md` v `src/content/aktuality/` |
 | Akce / zpráva z cesty | nový `.md` v `src/content/akce/` (budoucí datum `od` = zobrazí se v „Připravujeme“) |
 | Bod na mapě na úvodu | v akci vyplnit `mapa: { popisek, lat, lon }` – číslování a klíč se dopočítají |
-| Správní rada, zápisy, kontakty | `src/data/site.ts` |
+| Správní rada, zápisy, kontakty, ceník | `src/data/site.ts` |
+| Materiály do výuky | `materialy` v `src/data/site.ts` + soubor do `public/soubory/` |
 | Fotoalbum | `src/data/galerie.json` + fotky do `public/fotky/<album>/` |
 | Dokument ke stažení | soubor do `public/soubory/` |
 

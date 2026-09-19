@@ -1,0 +1,62 @@
+---
+// Fotografie s místem pro doplnění: když soubor chybí (nebo se ještě nestáhl ze starého webu),
+// zobrazí se rámeček s popisem toho, co sem patří a v jakém rozměru.
+interface Props {
+  src?: string;
+  alt?: string;
+  popis: string;
+  pomer?: string;
+  kruh?: boolean;
+  vyska?: string;
+}
+const { src, alt = '', popis, pomer = '4 / 3', kruh = false, vyska } = Astro.props;
+const styl = vyska ? `height:${vyska}` : `aspect-ratio:${pomer}`;
+---
+
+<div class:list={['obrazek', { kruh }]} style={styl} data-prazdne={src ? undefined : ''}>
+  {src && (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      onerror="this.closest('.obrazek').setAttribute('data-prazdne','')"
+    />
+  )}
+  <span class="udaj misto">{popis}</span>
+</div>
+
+<style>
+  .obrazek {
+    position: relative;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--text) 7%, transparent);
+    border: 1px solid var(--linka);
+  }
+  .obrazek img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .kruh {
+    border-radius: 50%;
+  }
+  .misto {
+    display: none;
+    position: absolute;
+    inset: 0;
+    place-items: center;
+    text-align: center;
+    padding: 0.8rem;
+    text-wrap: balance;
+  }
+  .obrazek[data-prazdne] {
+    border-style: dashed;
+  }
+  .obrazek[data-prazdne] img {
+    display: none;
+  }
+  .obrazek[data-prazdne] .misto {
+    display: grid;
+  }
+</style>

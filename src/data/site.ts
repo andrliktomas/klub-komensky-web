@@ -42,6 +42,38 @@ export const zapisy = [
   { rok: 2012, nazev: 'Valná hromada 5. 12. 2012', soubor: 'zapis-valna-hromada-2012.doc' },
 ];
 
+// Materiály do výuky, které členové sdílejí pro kolegy. Nový soubor stačí přidat
+// do public/soubory/ a sem doplnit řádek.
+export const materialy = [
+  { tema: 'Občanská válka v USA', nazev: 'Výklad a úkoly k tématu', soubor: 'obcanska-valka-v-usa-vyklad-a-ukoly.docx' },
+  { tema: 'Občanská válka v USA', nazev: 'Řešení úkolů', soubor: 'obcanska-valka-v-usa-reseni.docx' },
+];
+
+// Výroční zprávy: až je klub bude mít, přidejte soubor do public/soubory/
+// a řádek { rok: 2025, soubor: 'vyrocni-zprava-2025.pdf' }. Prázdný seznam
+// zobrazí v Dokumentech poznámku, že se zprávy připravují.
+export const vyrocniZpravy: { rok: number; soubor: string }[] = [];
+
+/* ── Údaje k doplnění ──────────────────────────────────────────────────────
+   Dokud jsou prázdné (null / []), ukazuje web na jejich místě viditelné
+   „doplnit“. Nikdy tam nesmí být vymyšlené číslo, cena ani citace. */
+
+// Počet členů klubu – doplňte číslo, např. 45.
+export const pocetClenu: number | null = null;
+
+// Ceník. Doplňte cenu jako text, např. '300 Kč' nebo 'od 9 000 Kč'.
+export const cenik: { co: string; pozn: string; cena: string | null }[] = [
+  { co: 'Členský příspěvek', pozn: 'na kalendářní rok', cena: null },
+  { co: 'Zahraniční exkurze – člen', pozn: 'orientačně, podle destinace', cena: null },
+  { co: 'Zahraniční exkurze – nečlen', pozn: 'orientačně', cena: null },
+];
+
+// Ohlasy účastníků. Doplňte { text: 'citace', kdo: 'Ředitelka MŠ, Brno – Lublaň 2025' }.
+export const ohlasy: { text: string; kdo: string }[] = [];
+
+// Partneři. Logo (480 × 160 px) uložte do public/obrazky/partneri/ a uveďte název souboru.
+export const partneri: { nazev: string; logo?: string }[] = [];
+
 const mesice = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
 export const datum = (d: Date) => `${d.getUTCDate()}. ${mesice[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 export const pripona = (s: string) => (s.split('.').pop() || '').toUpperCase();

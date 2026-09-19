@@ -12,12 +12,28 @@ const klic = import.meta.env.PUBLIC_WEB3FORMS_KEY;
 
   <section class="sekce">
     <div class="obal dvoje">
-      <dl class="udaje">
-        <div><dt class="udaj">E-mail</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
-        <div><dt class="udaj">Datová schránka</dt><dd>{site.datovaSchranka}</dd></div>
-        <div><dt class="udaj">IČO</dt><dd>{site.ico}</dd></div>
-        <div><dt class="udaj">Spolek</dt><dd>{site.nazev}</dd></div>
-      </dl>
+      <div>
+        <dl class="udaje">
+          <div><dt class="udaj">E-mail</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+          <div><dt class="udaj">Datová schránka</dt><dd>{site.datovaSchranka}</dd></div>
+          <div><dt class="udaj">IČO</dt><dd>{site.ico}</dd></div>
+          <div><dt class="udaj">Spolek</dt><dd>{site.nazev}</dd></div>
+        </dl>
+
+        <div class="odber" id="odber">
+          <h2>Odběr novinek e-mailem</h2>
+          <p class="pozn">Pozvánky na akce a nové zprávy z cest, několikrát do roka.</p>
+          <p>
+            <a
+              class="tlacitko tlacitko-obrys"
+              href={`mailto:${site.email}?subject=${encodeURIComponent('Odběr novinek')}&body=${encodeURIComponent('Dobrý den, přihlaste mě prosím k odběru novinek Klubu Komenský.')}`}
+            >Přihlásit se k odběru</a>
+          </p>
+          <p class="pozn">
+            Novinky vycházejí také jako <a href="/rss.xml">RSS</a>.
+          </p>
+        </div>
+      </div>
 
       <form
         class="formular"
@@ -77,6 +93,9 @@ const klic = import.meta.env.PUBLIC_WEB3FORMS_KEY;
 <style>
   .dvoje { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
   .udaje { margin: 0; display: grid; gap: 1.6rem; border-top: 1px solid var(--text); padding-top: 1.4rem; }
+  .odber { margin-top: 3rem; border-top: 1px solid var(--linka); padding-top: 1.4rem; }
+  .odber h2 { font-size: 1.6rem; line-height: 1.2; }
+  .pozn { color: var(--text-tlumeny); font-size: 1.1rem; line-height: 1.5; margin: 0.6rem 0 1rem; }
   .udaje dd { margin: 0.2rem 0 0; font-size: 1.5rem; line-height: 1.25; overflow-wrap: anywhere; }
   .formular { display: grid; gap: 0.45rem; max-width: 38rem; }
   .formular h2 { margin-bottom: 1.2rem; }

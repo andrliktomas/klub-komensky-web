@@ -1,12 +1,39 @@
 ---
 import Base from '../layouts/Base.astro';
 import Zahlavi from '../components/Zahlavi.astro';
+import { site } from '../data/site';
+
+const odkazy = [
+  { href: '/', text: 'Úvodní stránka' },
+  { href: '/akce/', text: 'Akce a zprávy z cest' },
+  { href: '/dokumenty/#zapisy', text: 'Zápisy z valných hromad' },
+  { href: '/fotogalerie/', text: 'Fotogalerie' },
+];
 ---
+
 <Base titulek="Stránka nenalezena">
-  <Zahlavi nadpis="Tahle stránka tu není" uvod="Adresa se mohla změnit při přechodu na nový web. Zkuste to z úvodní stránky nebo z přehledu akcí.">
-    <p style="display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2.2rem">
-      <a class="tlacitko tlacitko-plne" href="/">Přejít na úvodní stránku</a>
-      <a class="tlacitko tlacitko-obrys" href="/akce/">Přehled akcí</a>
-    </p>
-  </Zahlavi>
+  <Zahlavi
+    nadpis="Stránka nenalezena"
+    uvod="Tato adresa na novém webu neexistuje. Odkazy ze starého webu jsme přesměrovali, ale něco nám mohlo uniknout."
+  />
+
+  <section class="sekce">
+    <div class="obal uzsi">
+      <p class="velky">
+        Zkuste jednu z hlavních sekcí, nebo nám napište, co jste hledali – na
+        <a href={`mailto:${site.email}`}>{site.email}</a>.
+      </p>
+      <ul>
+        {odkazy.map((o) => <li><a href={o.href}>{o.text}</a></li>)}
+      </ul>
+    </div>
+  </section>
 </Base>
+
+<style>
+  .uzsi { max-width: 42rem; }
+  .velky { font-size: 1.4rem; line-height: 1.45; }
+  ul { list-style: none; margin: 2rem 0 0; padding: 0; border-top: 1px solid var(--linka); }
+  li a { display: block; padding: 1.05rem 0; border-bottom: 1px solid var(--linka); color: inherit; text-decoration: none; font-size: 1.35rem; }
+  li a:hover { color: var(--akcent); }
+</style>
