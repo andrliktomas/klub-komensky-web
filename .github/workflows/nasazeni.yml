@@ -1,17 +1,21 @@
-# Nasazení webu na Cloudflare Pages.
+# Build a nasazení webu na Cloudflare Workers.
 #
-# Potřebuje dvě tajné proměnné v repozitáři (Settings → Secrets and variables → Actions):
+# Build běží při každém pushi do main a hlídá, že se web postaví.
+#
+# Nasazení proběhne jen tehdy, když jsou v repozitáři vyplněné tajné proměnné
+# (Settings → Secrets and variables → Actions):
 #   CLOUDFLARE_API_TOKEN   – Cloudflare → My Profile → API Tokens → Create Token
-#                            → šablona „Edit Cloudflare Workers“ (obsahuje i Pages),
-#                            nebo vlastní token s oprávněním Account → Cloudflare Pages → Edit
+#                            → šablona „Edit Cloudflare Workers“
 #   CLOUDFLARE_ACCOUNT_ID  – Cloudflare → Workers & Pages → vpravo „Account ID“
+# Bez nich se krok nasazení přeskočí (build ale nespadne).
 #
-# Volitelně:
-#   proměnná (Variables) SITE_URL             – výsledná adresa webu, kvůli kanonickým odkazům,
-#                                               sitemapě a RSS, např. https://klub-komensky-web.pages.dev
-#   tajná proměnná PUBLIC_WEB3FORMS_KEY       – odesílání formulářů přímo z webu
+# Pokud je Worker klub-komensky-web propojený s tímhle repozitářem přímo
+# v Cloudflare (Workers Builds), nasazuje se sám a tyhle proměnné nejsou potřeba.
+#
+# Volitelně: proměnná SITE_URL (výsledná adresa webu – kanonické odkazy, sitemapa,
+# RSS) a tajná proměnná PUBLIC_WEB3FORMS_KEY (odesílání formulářů z webu).
 
-name: Nasazení na Cloudflare Pages
+name: Build a nasazení
 
 on:
   push:
@@ -27,7 +31,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      deployments: write
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -39,7 +45,7 @@ jobs:
       - name: Instalace závislostí
         run: npm ci
 
-      # prebuild v package.json přitom stáhne fotky a dokumenty ze starého webu,
+      # prebuild přitom stáhne fotky a dokumenty ze starého webu,
       # pokud ještě nejsou v repozitáři
       - name: Build
         run: npm run build
@@ -47,15 +53,10 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL }}
           PUBLIC_WEB3FORMS_KEY: ${{ secrets.PUBLIC_WEB3FORMS_KEY }}
 
-      - name: Založení projektu na Cloudflare Pages (proběhne jen poprvé)
-        continue-on-error: true
-        run: npx --yes wrangler@4 pages project create klub-komensky-web --production-branch main
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Nasazení na Cloudflare
+        if: ${{ env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != '' }}
+        run: npx --yes wrangler@4 deploy
 
-      - name: Nasazení
-        run: npx --yes wrangler@4 pages deploy dist --project-name klub-komensky-web --branch main
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Bez nasazení
+        if: ${{ env.CLOUDFLARE_API_TOKEN == '' || env.CLOUDFLARE_ACCOUNT_ID == '' }}
+        run: echo "Web se postavil, nasazení přeskočeno – chybí CLOUDFLARE_API_TOKEN nebo CLOUDFLARE_ACCOUNT_ID."

@@ -1,3 +1,9 @@
+# Worker se statickými assety – web se staví do dist/ a Worker ho jen servíruje.
+# Stejné nastavení jako u ostatních webů (peakflow-web, packlabs-web).
 name = "klub-komensky-web"
-pages_build_output_dir = "dist"
 compatibility_date = "2026-09-01"
+
+[assets]
+directory = "./dist"
+# /404.html pro neexistující adresy; _redirects a _headers v dist/ platí i tady
+not_found_handling = "404-page"

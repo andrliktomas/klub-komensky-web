@@ -6,24 +6,35 @@ Vizuál vychází z barev původního webu klubu: tmavě hnědá (`#3a1c10`), ok
 terakota (`#a9491f`) a papír (`#f5efe6`). Barvy jsou na jednom místě v `src/styles/global.css`
 (blok `:root`) – změna se propíše do celého webu včetně mapy, pečeti a záhlaví.
 
-## Nasazení – dvě možnosti
+## Nasazení na Cloudflare Workers
 
-### A) Automaticky z GitHubu (`.github/workflows/nasazeni.yml`)
+Web je statický; `wrangler.toml` ho nasazuje jako Worker se statickými assety
+(`[assets] directory = "./dist"`), stejně jako ostatní weby na tomhle účtu.
 
-Workflow po každém pushi do `main` web postaví a nasadí na Cloudflare Pages – projekt
-při prvním běhu sám založí. Stačí do repozitáře doplnit dvě tajné proměnné
-(Settings → Secrets and variables → Actions → New repository secret):
+### A) Workers Builds – propojení s GitHubem (doporučeno)
+
+Cloudflare → Workers & Pages → Worker `klub-komensky-web` → Settings → Build →
+Connect to Git → repozitář `andrliktomas/klub-komensky-web`:
+
+- Build command: `npm run build`
+- Deploy command: `npx wrangler deploy`
+- Branch: `main`
+- Proměnné: `NODE_VERSION` = `22`, po prvním nasazení `SITE_URL` = výsledná adresa
+
+Každý push do `main` pak web sám postaví a nasadí.
+
+### B) Z GitHub Actions (`.github/workflows/nasazeni.yml`)
+
+Workflow staví web při každém pushi. Nasadí ho, jakmile jsou v repozitáři vyplněné
+tajné proměnné (Settings → Secrets and variables → Actions → New repository secret);
+dokud tam nejsou, krok nasazení se přeskočí:
 
 | Proměnná | Kde ji vzít |
 | --- | --- |
 | `CLOUDFLARE_API_TOKEN` | Cloudflare → My Profile → API Tokens → Create Token → šablona „Edit Cloudflare Workers“ |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare → Workers & Pages → vpravo „Account ID“ |
 
-Volitelně proměnná (Variables) `SITE_URL` s výslednou adresou webu a tajná proměnná
-`PUBLIC_WEB3FORMS_KEY` pro kontaktní formulář. Pak Actions → „Nasazení na Cloudflare
-Pages“ → Run workflow.
-
-### B) Propojením v Cloudflare (GitHub → Cloudflare Pages)
+### C) Starší postup: Cloudflare Pages
 
 1. Založte na GitHubu prázdný repozitář a nahrajte do něj tuto složku:
    ```bash
