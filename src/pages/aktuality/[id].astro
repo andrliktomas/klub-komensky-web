@@ -1,0 +1,47 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Zahlavi from '../../components/Zahlavi.astro';
+import Prilohy from '../../components/Prilohy.astro';
+import { datum } from '../../data/site';
+
+export async function getStaticPaths() {
+  const vse = (await getCollection('aktuality')).sort((a, b) => +b.data.date - +a.data.date);
+  return vse.map((n, i) => ({ params: { id: n.id }, props: { n, novejsi: vse[i - 1], starsi: vse[i + 1] } }));
+}
+const { n, novejsi, starsi } = Astro.props;
+const { Content } = await render(n);
+---
+<Base titulek={n.data.title} popis={n.data.perex}>
+  <Zahlavi nadpis={n.data.title} drobecky={[{ href: '/aktuality/', text: 'Aktuality' }]}>
+    <p class="udaj" style="margin-top:1.4rem">
+      <time datetime={n.data.date.toISOString().slice(0, 10)}>{datum(n.data.date)}</time>, {n.data.rubrika}
+    </p>
+  </Zahlavi>
+
+  <article class="sekce">
+    <div class="obal">
+      <div class="proza velka"><Content /></div>
+      {n.data.prilohy.length > 0 && (
+        <div style="margin-top:3rem">
+          <h2 style="font-size:1.7rem;margin-bottom:1.2rem">Ke stažení</h2>
+          <Prilohy polozky={n.data.prilohy} />
+        </div>
+      )}
+
+      <nav class="sousedni" aria-label="Další aktuality">
+        {starsi ? <a href={`/aktuality/${starsi.id}/`}><span class="udaj">Starší</span>{starsi.data.title}</a> : <span />}
+        {novejsi ? <a href={`/aktuality/${novejsi.id}/`} class="vpravo"><span class="udaj">Novější</span>{novejsi.data.title}</a> : <span />}
+      </nav>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .velka { font-size: 1.4rem; line-height: 1.55; }
+  .sousedni { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: clamp(3.5rem, 7vw, 6rem); padding-top: 1.5rem; border-top: 1px solid var(--linka); }
+  .sousedni a { color: inherit; text-decoration: none; font-size: 1.35rem; line-height: 1.25; }
+  .sousedni a:hover { color: var(--akcent); }
+  .sousedni .udaj { display: block; margin-bottom: 0.3rem; }
+  .sousedni .vpravo { text-align: right; }
+</style>

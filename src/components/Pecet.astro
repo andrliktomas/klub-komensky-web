@@ -1,0 +1,13 @@
+---
+// Pečeť klubu – kruhový opis a iniciála. Kreslená přímo v SVG, aby šla použít i jako favicon.
+const id = 'opis-' + Math.random().toString(36).slice(2, 7);
+---
+<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+  <defs><path id={id} d="M50 50 m-38 0 a38 38 0 1 1 76 0 a38 38 0 1 1 -76 0" /></defs>
+  <circle cx="50" cy="50" r="48" fill="none" stroke="#cba95f" stroke-width="1.5" />
+  <circle cx="50" cy="50" r="29" fill="none" stroke="#cba95f" stroke-width="0.8" />
+  <text font-family="'Hanken Grotesk Variable', system-ui, sans-serif" font-size="9.4" font-weight="600" letter-spacing="2.55" fill="#cba95f">
+    <textPath href={`#${id}`} startOffset="0">KLUB KOMENSKÝ ✦ BRNO ✦ SPOLEK PRO ŠKOLSTVÍ ✦</textPath>
+  </text>
+  <text x="50" y="63" text-anchor="middle" font-family="'EB Garamond Variable', Georgia, serif" font-size="40" font-style="italic" fill="#f6f5ef">K</text>
+</svg>

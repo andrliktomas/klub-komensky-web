@@ -1,0 +1,96 @@
+---
+// Mapa cest klubu: body leží na skutečných zeměpisných souřadnicích (sinusoidální projekce),
+// číslování odpovídá chronologii a klíči pod mapou – po vzoru tabulí v Orbis pictus.
+interface Cil { n: number; popisek: string; lat: number; lon: number; href: string; rok: number }
+interface Props { cile: Cil[] }
+const { cile } = Astro.props;
+
+const s = 19, lon0 = 10.5, cx = 300, top = 26, latMax = 55;
+const p = (lat: number, lon: number): [number, number] => [
+  cx + (lon - lon0) * Math.cos((lat * Math.PI) / 180) * s,
+  top + (latMax - lat) * s,
+];
+const f = (n: number) => n.toFixed(1);
+
+const poledniky: { d: string; lon: number; x: number }[] = [];
+for (let lon = -10; lon <= 30; lon += 5) {
+  const b: string[] = [];
+  for (let lat = 34; lat <= 55; lat += 1) { const [x, y] = p(lat, lon); b.push(`${f(x)},${f(y)}`); }
+  poledniky.push({ d: 'M' + b.join(' L'), lon, x: p(34, lon)[0] });
+}
+const rovnobezky: { d: string; lat: number; x: number; y: number }[] = [];
+for (let lat = 35; lat <= 55; lat += 5) {
+  const a = p(lat, -10), b = p(lat, 30);
+  rovnobezky.push({ d: `M${f(a[0])},${f(a[1])} L${f(b[0])},${f(b[1])}`, lat, x: a[0], y: a[1] });
+}
+
+const brno = p(49.2, 16.61);
+// ruční odsazení popisků, aby se nepřekrývaly
+const odsazeni: Record<string, [number, number, 'start' | 'end' | 'middle']> = {
+  Poznaň: [17, 5, 'start'], Lublaň: [-17, 3, 'end'], Daruvar: [17, 6, 'start'], Florencie: [-17, 2, 'end'],
+  Řím: [17, 8, 'start'], Auch: [0, 30, 'middle'], Marbella: [17, 5, 'start'], Santorini: [-17, 5, 'end'],
+};
+const body = cile.map((c) => {
+  const [x, y] = p(c.lat, c.lon);
+  const mx = (brno[0] + x) / 2, my = (brno[1] + y) / 2;
+  const dx = x - brno[0], dy = y - brno[1];
+  const k = 0.16 * (dx < 0 ? 1 : -1);
+  const trasa = `M${f(brno[0])},${f(brno[1])} Q${f(mx - dy * k)},${f(my + dx * k)} ${f(x)},${f(y)}`;
+  const o = odsazeni[c.popisek] ?? [17, 5, 'start'];
+  return { ...c, x, y, trasa, o };
+});
+---
+<svg class="mapa" viewBox="0 0 600 470" role="img" aria-labelledby="mapa-nazev mapa-popis">
+  <title id="mapa-nazev">Mapa zahraničních cest Klubu Komenský</title>
+  <desc id="mapa-popis">Z Brna vedou trasy do {cile.length} míst v Evropě: {cile.map((c) => `${c.popisek} ${c.rok}`).join(', ')}.</desc>
+
+  <g class="sit-mapy" fill="none" stroke="#cba95f" stroke-width="0.7">
+    {poledniky.map((m) => <path d={m.d} />)}
+    {rovnobezky.map((r) => <path d={r.d} />)}
+  </g>
+  <g class="stupne" font-size="10" fill="#cba95f">
+    {rovnobezky.map((r) => <text x={r.x - 8} y={r.y + 3.5} text-anchor="end">{r.lat}°</text>)}
+    {poledniky.filter((m) => m.lon % 10 === 0).map((m) => <text x={m.x} y={top + (latMax - 34) * s + 18} text-anchor="middle">{m.lon}°</text>)}
+  </g>
+
+  <g class="trasy" fill="none" stroke="#e2c98d" stroke-width="1.3" stroke-linecap="round">
+    {body.map((b, i) => <path d={b.trasa} pathLength="1" style={`--i:${i}`} />)}
+  </g>
+
+  <g class="brno">
+    <circle cx={brno[0]} cy={brno[1]} r="15" fill="none" stroke="#cba95f" stroke-width="0.8" />
+    <circle cx={brno[0]} cy={brno[1]} r="5" fill="#f6f5ef" />
+    <text x={brno[0] + 22} y={brno[1] + 6} font-size="21" font-style="italic" fill="#f6f5ef" class="serif">Brno</text>
+  </g>
+
+  {body.map((b, i) => (
+    <a href={b.href} class="cil" style={`--i:${i}`} aria-label={`${b.n}. ${b.popisek} ${b.rok}`}>
+      <circle cx={b.x} cy={b.y} r="11.5" fill="#10302a" stroke="#cba95f" stroke-width="1.2" />
+      <text x={b.x} y={b.y + 4} text-anchor="middle" font-size="12" font-weight="600" fill="#f6f5ef">{b.n}</text>
+      <text x={b.x + b.o[0]} y={b.y + b.o[1]} text-anchor={b.o[2]} font-size="17" fill="#f6f5ef" class="serif">{b.popisek}</text>
+    </a>
+  ))}
+</svg>
+
+<style>
+  .mapa { width: 100%; height: auto; overflow: visible; font-family: var(--sans); }
+  .mapa .serif { font-family: var(--serif); paint-order: stroke; stroke: #10302a; stroke-width: 6px; stroke-linejoin: round; }
+  @media (max-width: 40rem) { .mapa .cil .serif { font-size: 23px; } .mapa .stupne { display: none; } }
+  .sit-mapy { opacity: 0.32; }
+  .stupne { opacity: 0.6; font-feature-settings: 'tnum', 'lnum'; }
+  .cil { text-decoration: none; cursor: pointer; }
+  .cil circle { transition: fill 0.15s; }
+  .cil:hover circle, .cil:focus-visible circle { fill: #cba95f; }
+  .cil:hover text:first-of-type, .cil:focus-visible text:first-of-type { fill: #0a221d; }
+  .cil:focus-visible { outline: none; }
+
+  /* Jediný orchestrovaný pohyb na webu: trasy se po načtení rozkreslí z Brna. */
+  .trasy path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: kresli 1.1s cubic-bezier(0.5, 0, 0.2, 1) forwards; animation-delay: calc(0.5s + var(--i) * 0.16s); }
+  .cil { opacity: 0; animation: objev 0.45s ease-out forwards; animation-delay: calc(1.35s + var(--i) * 0.16s); }
+  @keyframes kresli { to { stroke-dashoffset: 0; } }
+  @keyframes objev { to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .trasy path { stroke-dashoffset: 0; animation: none; }
+    .cil { opacity: 1; animation: none; }
+  }
+</style>

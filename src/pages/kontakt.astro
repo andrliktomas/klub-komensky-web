@@ -1,0 +1,93 @@
+---
+import Base from '../layouts/Base.astro';
+import Zahlavi from '../components/Zahlavi.astro';
+import { site } from '../data/site';
+
+// Klíč z web3forms.com – nastavte v Cloudflare Pages jako proměnnou PUBLIC_WEB3FORMS_KEY.
+// Bez klíče formulář otevře e-mailový program návštěvníka.
+const klic = import.meta.env.PUBLIC_WEB3FORMS_KEY;
+---
+<Base titulek="Kontakt" popis="Napište Klubu Komenský: e-mail, datová schránka a kontaktní formulář.">
+  <Zahlavi nadpis="Kontakt" uvod="Chcete se přidat, zúčastnit se akce nebo se na něco zeptat? Napište nám." />
+
+  <section class="sekce">
+    <div class="obal dvoje">
+      <dl class="udaje">
+        <div><dt class="udaj">E-mail</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+        <div><dt class="udaj">Datová schránka</dt><dd>{site.datovaSchranka}</dd></div>
+        <div><dt class="udaj">IČO</dt><dd>{site.ico}</dd></div>
+        <div><dt class="udaj">Spolek</dt><dd>{site.nazev}</dd></div>
+      </dl>
+
+      <form
+        class="formular"
+        method="post"
+        action={klic ? 'https://api.web3forms.com/submit' : `mailto:${site.email}`}
+        enctype={klic ? undefined : 'text/plain'}
+        data-web3={klic ? '' : undefined}
+      >
+        <h2>Napište nám</h2>
+        {klic && <input type="hidden" name="access_key" value={klic} />}
+        {klic && <input type="hidden" name="from_name" value="Web Klubu Komenský" />}
+        <input type="checkbox" name="botcheck" class="skryte" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <label for="f-jmeno">Jméno</label>
+        <input id="f-jmeno" name="name" type="text" autocomplete="name" required />
+
+        <label for="f-email">Váš e-mail</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required />
+
+        <label for="f-predmet">Předmět</label>
+        <input id="f-predmet" name="subject" type="text" required />
+
+        <label for="f-text">Zpráva</label>
+        <textarea id="f-text" name="message" rows="6" required></textarea>
+
+        <button class="tlacitko tlacitko-plne" type="submit">Odeslat zprávu</button>
+        <p class="stav udaj" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      var f = document.querySelector('form[data-web3]');
+      if (!f) return;
+      var stav = f.querySelector('.stav'), b = f.querySelector('button[type=submit]');
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        b.disabled = true;
+        stav.textContent = 'Odesíláme zprávu…';
+        fetch(f.action, { method: 'POST', body: new FormData(f), headers: { Accept: 'application/json' } })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (!d.success) throw new Error();
+            f.reset();
+            stav.textContent = 'Zpráva odeslána. Ozveme se vám na uvedený e-mail.';
+          })
+          .catch(function () {
+            stav.textContent = 'Zprávu se nepodařilo odeslat. Zkuste to znovu, nebo napište přímo na klubkomensky@seznam.cz.';
+          })
+          .finally(function () { b.disabled = false; });
+      });
+    })();
+  </script>
+</Base>
+
+<style>
+  .dvoje { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .udaje { margin: 0; display: grid; gap: 1.6rem; border-top: 1px solid var(--text); padding-top: 1.4rem; }
+  .udaje dd { margin: 0.2rem 0 0; font-size: 1.5rem; line-height: 1.25; overflow-wrap: anywhere; }
+  .formular { display: grid; gap: 0.45rem; max-width: 38rem; }
+  .formular h2 { margin-bottom: 1.2rem; }
+  label { font-family: var(--sans); font-size: 0.95rem; font-weight: 550; margin-top: 0.9rem; }
+  input[type='text'], input[type='email'], textarea {
+    font: inherit; font-size: 1.2rem; color: var(--text); background: var(--bg-vyssi);
+    border: 1px solid color-mix(in srgb, var(--text) 40%, transparent); border-radius: 2px; padding: 0.75rem 0.9rem; width: 100%;
+  }
+  textarea { resize: vertical; min-height: 9rem; }
+  input:focus-visible, textarea:focus-visible { outline: 2px solid var(--akcent); outline-offset: 1px; border-color: var(--akcent); }
+  .formular .tlacitko { justify-self: start; margin-top: 1.4rem; }
+  .stav { min-height: 1.4em; margin: 0.8rem 0 0; font-size: 1rem; color: var(--text); }
+  @media (max-width: 52rem) { .dvoje { grid-template-columns: 1fr; } }
+</style>

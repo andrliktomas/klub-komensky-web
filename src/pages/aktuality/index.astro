@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Zahlavi from '../../components/Zahlavi.astro';
+import { datum } from '../../data/site';
+
+const vse = (await getCollection('aktuality')).sort((a, b) => +b.data.date - +a.data.date);
+const roky = [...new Set(vse.map((n) => n.data.date.getUTCFullYear()))];
+---
+<Base titulek="Aktuality" popis="Novinky ze života Klubu Komenský: zprávy z exkurzí, pozvánky na semináře a zápisy z valných hromad.">
+  <Zahlavi nadpis="Aktuality" uvod="Zprávy z cest, pozvánky a novinky ze života klubu." />
+
+  <section class="sekce">
+    <div class="obal">
+      {roky.map((rok) => (
+        <div class="rocnik">
+          <h2>{rok}</h2>
+          <ul class="radky">
+            {vse.filter((n) => n.data.date.getUTCFullYear() === rok).map((n) => (
+              <li><a class="radek" href={`/aktuality/${n.id}/`}>
+                <time class="udaj" datetime={n.data.date.toISOString().slice(0, 10)}>{datum(n.data.date)}</time>
+                <span><h3>{n.data.title}</h3><p>{n.data.perex}</p></span>
+                <span class="udaj konec">{n.data.rubrika}</span>
+              </a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <p class="udaj" style="margin-top:3rem">Novinky můžete odebírat také přes <a href="/rss.xml">RSS</a>.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .rocnik + .rocnik { margin-top: clamp(3rem, 6vw, 5rem); }
+  .rocnik h2 { margin-bottom: 1.2rem; font-feature-settings: 'lnum'; }
+</style>

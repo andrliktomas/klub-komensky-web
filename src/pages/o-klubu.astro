@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import Zahlavi from '../components/Zahlavi.astro';
+import Prilohy from '../components/Prilohy.astro';
+import { site, spravniRada } from '../data/site';
+---
+<Base titulek="O klubu" popis="Kdo jsme, co děláme a kdo Klub Komenský vede. Sdružení pracovníků školství z Brna a okolí.">
+  <Zahlavi nadpis="O klubu" uvod="Aktivní sdružení pracovníků školství z Brna a okolí. Podporujeme se navzájem – v profesi i mezi lidmi." />
+
+  <section class="sekce">
+    <div class="obal dvoje">
+      <h2>Co děláme</h2>
+      <div class="proza">
+        <p>
+          Klub Komenský je aktivní sdružení pracovníků školství z Brna a okolí. Naším cílem je
+          zejména vzájemná podpora jak v profesní, tak v lidské oblasti.
+        </p>
+        <p>
+          Pořádáme zahraniční vzdělávací exkurze akreditované MŠMT, během nichž navštěvujeme
+          mateřské, základní i střední školy, setkáváme se s jejich vedením i se zástupci školské
+          správy a porovnáváme tamní vzdělávací systém s českým. Byli jsme v Chorvatsku, Itálii,
+          Francii, Řecku, Polsku, Španělsku a Slovinsku. Doma pořádáme semináře k aktuálním
+          otázkám řízení škol.
+        </p>
+        <p>
+          Našich akcí se můžete účastnit i jako nečlenové. <a href="/akce/">Podívejte se, co jsme pořádali</a>.
+        </p>
+        <p>
+          Klub vznikl jako občanské sdružení. Valná hromada později schválila změnu názvu
+          na zapsaný spolek (z. s.).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sekce sekce-vyssi" id="spravni-rada">
+    <div class="obal dvoje">
+      <h2>Správní rada</h2>
+      <ul class="rada">
+        {spravniRada.map((c) => (
+          <li>
+            <span class="jmeno">{c.jmeno}</span>
+            <span class="udaj">{c.funkce}, {c.pusobiste}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="sekce">
+    <div class="obal dvoje">
+      <h2>Stanovy a údaje o spolku</h2>
+      <div>
+        <dl class="udaje">
+          <div><dt class="udaj">Název</dt><dd>{site.nazev}</dd></div>
+          <div><dt class="udaj">IČO</dt><dd>{site.ico}</dd></div>
+          <div><dt class="udaj">Datová schránka</dt><dd>{site.datovaSchranka}</dd></div>
+          <div><dt class="udaj">E-mail</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+        </dl>
+        <Prilohy polozky={[
+          { nazev: 'Stanovy Klubu Komenský (2015)', soubor: 'stanovy-kk-2015.doc' },
+          { nazev: 'Přihláška za člena', soubor: 'prihlaska-clenstvi.doc' },
+        ]} />
+        <p style="margin-top:1.5rem"><a class="odkaz-dal" href="/dokumenty/#zapisy">Zápisy z valných hromad</a></p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .dvoje { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: clamp(1.5rem, 6vw, 6rem); align-items: start; }
+  .rada { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linka); }
+  .rada li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.2rem 2rem; padding-block: 1.15rem; border-bottom: 1px solid var(--linka); }
+  .rada .jmeno { font-size: 1.6rem; line-height: 1.2; }
+  .udaje { margin: 0 0 2.5rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 2rem; max-width: 46rem; }
+  .udaje dd { margin: 0.2rem 0 0; font-size: 1.35rem; }
+  @media (max-width: 52rem) { .dvoje { grid-template-columns: 1fr; } .udaje { grid-template-columns: 1fr; } }
+</style>

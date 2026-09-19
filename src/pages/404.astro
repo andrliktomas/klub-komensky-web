@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import Zahlavi from '../components/Zahlavi.astro';
+---
+<Base titulek="Stránka nenalezena">
+  <Zahlavi nadpis="Tahle stránka tu není" uvod="Adresa se mohla změnit při přechodu na nový web. Zkuste to z úvodní stránky nebo z přehledu akcí.">
+    <p style="display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2.2rem">
+      <a class="tlacitko tlacitko-plne" href="/">Přejít na úvodní stránku</a>
+      <a class="tlacitko tlacitko-obrys" href="/akce/">Přehled akcí</a>
+    </p>
+  </Zahlavi>
+</Base>

@@ -1,0 +1,15 @@
+---
+import { pripona } from '../data/site';
+interface Props { polozky: { nazev: string; soubor: string }[] }
+const { polozky } = Astro.props;
+---
+<ul class="soubory">
+  {polozky.map((p) => (
+    <li>
+      <a href={`/soubory/${p.soubor}`} download>
+        <span class="jmeno">{p.nazev}</span>
+        <span class="udaj typ">{pripona(p.soubor)}</span>
+      </a>
+    </li>
+  ))}
+</ul>

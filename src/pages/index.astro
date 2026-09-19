@@ -1,0 +1,250 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import MapaCest from '../components/MapaCest.astro';
+import { site, spravniRada, datum } from '../data/site';
+
+const vsechnyAkce = (await getCollection('akce')).sort((a, b) => +a.data.od - +b.data.od);
+const cesty = vsechnyAkce
+  .filter((a) => a.data.mapa)
+  .map((a, i) => ({
+    n: i + 1,
+    popisek: a.data.mapa!.popisek,
+    lat: a.data.mapa!.lat,
+    lon: a.data.mapa!.lon,
+    rok: a.data.od.getUTCFullYear(),
+    zeme: a.data.zeme,
+    href: `/akce/${a.id}/`,
+  }));
+
+const dnes = new Date();
+const nadchazejici = vsechnyAkce.filter((a) => +(a.data.do ?? a.data.od) >= +dnes);
+const posledni = [...vsechnyAkce].reverse().slice(0, 3);
+const aktuality = (await getCollection('aktuality')).sort((a, b) => +b.data.date - +a.data.date).slice(0, 4);
+---
+<Base>
+  <section class="uvod na-tmavem">
+    <div class="obal uvod-mrizka">
+      <div class="uvod-text">
+        <h1 class="udaj">Klub Komenský – sdružení pracovníků školství z Brna a okolí</h1>
+        <blockquote>
+          <p>{site.citat}</p>
+          <footer class="udaj">Jan Amos Komenský</footer>
+        </blockquote>
+        <p class="uvod-popis">
+          Jezdíme se učit do škol po celé Evropě, pořádáme semináře pro vedení škol
+          a držíme při sobě – v profesi i mezi lidmi.
+        </p>
+        <div class="uvod-akce">
+          <a class="tlacitko tlacitko-plne" href="/akce/">Prohlédnout akce klubu</a>
+          <a class="tlacitko tlacitko-obrys" href="/dokumenty/#clenstvi">Stát se členem</a>
+        </div>
+      </div>
+      <div class="uvod-mapa">
+        <MapaCest cile={cesty} />
+      </div>
+    </div>
+
+    <div class="obal">
+      <div class="klic">
+        <h2 class="udaj">Kam jsme se jeli učit</h2>
+        <ol>
+          {cesty.map((c) => (
+            <li>
+              <a href={c.href}>
+                <span class="cislo udaj">{c.n}</span>
+                <span class="kam">{c.popisek}<span class="udaj">{c.zeme}, {c.rok}</span></span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="sekce">
+    <div class="obal o-klubu">
+      <h2>Vzájemná podpora v profesi i mezi lidmi</h2>
+      <div>
+        <p class="velky">
+          Klub Komenský je aktivní sdružení pracovníků školství z Brna a okolí. Naším cílem je
+          zejména vzájemná podpora jak v profesní, tak v lidské oblasti.
+        </p>
+        <p>
+          Sledujte naše aktuální aktivity, a pokud se vám budou líbit, můžete se jich
+          účastnit – a to i jako nečlenové.
+        </p>
+        <p><a class="odkaz-dal" href="/o-klubu/">Více o klubu a správní radě</a></p>
+      </div>
+    </div>
+
+    <div class="obal cinnost">
+      <div>
+        <h3>Zahraniční exkurze</h3>
+        <p>
+          Akreditovaný program „Nové trendy ve vedení škol a školských zařízení“: návštěvy škol,
+          workshopy s jejich vedením a srovnání vzdělávacích systémů – od Daruvaru po Lublaň.
+        </p>
+      </div>
+      <div>
+        <h3>Semináře</h3>
+        <p>
+          Aktuální otázky řízení škol a školských zařízení s lektory z praxe, například k novému
+          občanskému zákoníku nebo zákonu o pedagogických pracovnících.
+        </p>
+      </div>
+      <div>
+        <h3>Setkávání</h3>
+        <p>
+          Valné hromady, vánoční posezení a výroční shromáždění. Zápisy ze všech jednání
+          zveřejňujeme od roku 2012.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sekce sekce-vyssi">
+    <div class="obal">
+      <div class="nadpis-sekce">
+        <h2>Akce</h2>
+        <a class="odkaz-dal" href="/akce/">Všechny akce a zprávy z cest</a>
+      </div>
+
+      {nadchazejici.length === 0 && (
+        <div class="prazdno">
+          <p class="velky">Další akci právě připravujeme.</p>
+          <p>
+            Napište nám na <a href={`mailto:${site.email}`}>{site.email}</a> a dáme vám vědět,
+            jakmile bude známý termín. Účastnit se mohou i nečlenové.
+          </p>
+        </div>
+      )}
+
+      {nadchazejici.length === 0 && <p class="udaj naposledy">Naposledy jsme byli</p>}
+      <ul class="radky">
+        {(nadchazejici.length ? nadchazejici : posledni).map((a) => (
+          <li>
+            <a class="radek" href={`/akce/${a.id}/`}>
+              <span class="udaj">{a.data.terminText}</span>
+              <span>
+                <h3>{a.data.title}</h3>
+                <p>{a.data.perex}</p>
+              </span>
+              <span class="udaj konec">{a.data.typ}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="sekce">
+    <div class="obal">
+      <div class="nadpis-sekce">
+        <h2>Aktuality</h2>
+        <a class="odkaz-dal" href="/aktuality/">Všechny aktuality</a>
+      </div>
+      <ul class="radky">
+        {aktuality.map((n) => (
+          <li>
+            <a class="radek" href={`/aktuality/${n.id}/`}>
+              <time class="udaj" datetime={n.data.date.toISOString().slice(0, 10)}>{datum(n.data.date)}</time>
+              <span>
+                <h3>{n.data.title}</h3>
+                <p>{n.data.perex}</p>
+              </span>
+              <span class="udaj konec">{n.data.rubrika}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="sekce sekce-vyssi">
+    <div class="obal rada">
+      <div>
+        <h2>Správní rada</h2>
+        <p class="rada-popis">Klub vedou lidé z mateřských a základních škol v Brně a okolí.</p>
+      </div>
+      <ul>
+        {spravniRada.map((c) => (
+          <li>
+            <span class="jmeno">{c.jmeno}</span>
+            <span class="udaj">{c.funkce}, {c.pusobiste}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="sekce na-tmavem pridejte-se">
+    <div class="obal">
+      <h2>Přidejte se k nám</h2>
+      <p class="velky">
+        Akcí se můžete účastnit i jako nečlenové. Členové ale mívají semináře
+        a exkurze za zvýhodněnou cenu – stačí vyplnit přihlášku a poslat ji e-mailem.
+      </p>
+      <div class="uvod-akce">
+        <a class="tlacitko tlacitko-plne" href="/soubory/prihlaska-clenstvi.doc" download>Stáhnout přihlášku</a>
+        <a class="tlacitko tlacitko-obrys" href="/kontakt/">Napsat klubu</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .uvod { padding-block: clamp(2.5rem, 6vw, 5rem) 0; overflow: hidden; }
+  .uvod-mrizka { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+  .uvod h1.udaj { font-family: var(--sans); font-size: 0.95rem; font-weight: 500; letter-spacing: 0.01em; color: var(--mosaz); line-height: 1.4; margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+  blockquote { margin: 0; position: relative; }
+  blockquote p { font-size: clamp(2.35rem, 4.6vw, 4.1rem); line-height: 1.08; letter-spacing: -0.018em; font-style: italic; font-weight: 400; margin: 0; text-wrap: balance; }
+  blockquote p::before { content: '„'; position: absolute; left: -0.55em; color: var(--mosaz); }
+  blockquote p::after { content: '“'; color: var(--mosaz); }
+  blockquote footer { margin-top: 1.4rem; padding-left: 3.2rem; position: relative; color: var(--mosaz); font-size: 0.95rem; }
+  blockquote footer::before { content: ''; position: absolute; left: 0; top: 50%; width: 2.4rem; height: 1px; background: var(--mosaz); }
+  .uvod-popis { font-size: clamp(1.25rem, 1.8vw, 1.45rem); line-height: 1.5; color: #d5ddd7; max-width: 33rem; margin: clamp(1.8rem, 3vw, 2.6rem) 0 0; }
+  .uvod-akce { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 2.2rem; }
+
+  .klic { margin-top: clamp(2.5rem, 5vw, 4rem); border-top: 1px solid var(--linka); padding-block: 1.8rem clamp(2.5rem, 5vw, 4rem); display: grid; grid-template-columns: 11rem 1fr; gap: 1rem 2rem; }
+  .klic h2 { font-family: var(--sans); font-size: 0.95rem; font-weight: 500; color: var(--mosaz); padding-top: 0.45rem; letter-spacing: 0.01em; }
+  .klic ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.4rem 1.5rem; }
+  .klic a { display: flex; gap: 0.8rem; align-items: baseline; padding-block: 0.4rem; color: var(--krida); text-decoration: none; }
+  .klic .cislo { flex: none; width: 1.55rem; height: 1.55rem; border: 1px solid var(--mosaz); border-radius: 50%; display: inline-grid; place-items: center; font-size: 0.75rem; font-weight: 600; color: var(--krida); transform: translateY(-0.15em); }
+  .klic .kam { font-size: 1.3rem; line-height: 1.2; }
+  .klic .kam .udaj { display: block; margin-top: 0.15rem; }
+  .klic a:hover .kam { color: var(--mosaz-jasna); }
+  .klic a:hover .cislo { background: var(--mosaz); color: var(--les-hluboky); }
+
+  .o-klubu { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .velky { font-size: clamp(1.4rem, 2.1vw, 1.7rem); line-height: 1.42; }
+  .cinnost { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(2rem, 4vw, 4rem); margin-top: clamp(3.5rem, 7vw, 6rem); }
+  .cinnost > div { border-top: 1px solid var(--text); padding-top: 1.3rem; }
+  .cinnost h3 { margin-bottom: 0.7rem; }
+  .cinnost p { color: var(--text-tlumeny); font-size: 1.15rem; line-height: 1.55; margin: 0; }
+
+  .prazdno { max-width: 40rem; margin-bottom: 3rem; }
+  .prazdno .velky { margin-bottom: 0.5rem; }
+  .naposledy { margin: 0 0 0.9rem; font-size: 0.95rem; }
+
+  .rada { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(2rem, 6vw, 6rem); }
+  .rada-popis { color: var(--text-tlumeny); margin-top: 1.2rem; max-width: 22rem; }
+  .rada ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linka); }
+  .rada li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.2rem 2rem; padding-block: 1.15rem; border-bottom: 1px solid var(--linka); }
+  .rada .jmeno { font-size: 1.6rem; line-height: 1.2; }
+
+  .pridejte-se .obal { max-width: 46rem; margin-inline: auto; text-align: center; }
+  .pridejte-se .velky { color: #d5ddd7; margin: 1.4rem auto 0; }
+  .pridejte-se .uvod-akce { justify-content: center; }
+
+  @media (max-width: 60rem) {
+    .uvod-mrizka, .o-klubu, .rada { grid-template-columns: 1fr; }
+    blockquote p::before { position: static; }
+    .klic { grid-template-columns: 1fr; }
+    .klic ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cinnost { grid-template-columns: 1fr; gap: 2rem; }
+  }
+  @media (max-width: 26rem) {
+    .klic .kam { font-size: 1.15rem; }
+  }
+</style>

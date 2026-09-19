@@ -1,0 +1,70 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Zahlavi from '../../components/Zahlavi.astro';
+import Prilohy from '../../components/Prilohy.astro';
+import galerie from '../../data/galerie.json';
+
+export async function getStaticPaths() {
+  const akce = await getCollection('akce');
+  return akce.map((a) => ({ params: { id: a.id }, props: { a } }));
+}
+const { a } = Astro.props;
+const { Content } = await render(a);
+const album = a.data.album ? galerie.alba.find((x) => x.slug === a.data.album) : undefined;
+---
+<Base titulek={a.data.title} popis={a.data.perex}>
+  <Zahlavi nadpis={a.data.title} uvod={a.data.perex} drobecky={[{ href: '/akce/', text: 'Akce' }]} />
+
+  <section class="sekce">
+    <div class="obal detail">
+      <dl class="fakta">
+        <div><dt class="udaj">Termín</dt><dd>{a.data.terminText}</dd></div>
+        <div><dt class="udaj">Místo</dt><dd>{a.data.misto}{a.data.zeme && `, ${a.data.zeme}`}</dd></div>
+        <div><dt class="udaj">Typ akce</dt><dd>{a.data.typ}</dd></div>
+        {a.data.akreditace && <div><dt class="udaj">Akreditace</dt><dd>{a.data.akreditace}</dd></div>}
+      </dl>
+
+      <div>
+        <div class="proza"><Content /></div>
+
+        {a.data.prilohy.length > 0 && (
+          <div class="blok">
+            <h2 class="maly">Ke stažení</h2>
+            <Prilohy polozky={a.data.prilohy} />
+          </div>
+        )}
+
+        {album && (
+          <div class="blok">
+            <h2 class="maly">Fotografie</h2>
+            <div class="nahledy">
+              {album.fotky.slice(0, 6).map((f, i) => (
+                <a href={`/fotogalerie/#${album.slug}`}>
+                  <img src={`/fotky/${f.cil}`} alt={`${album.nazev} ${album.rok} – fotografie ${i + 1}`} loading="lazy" decoding="async" onerror="this.closest('a').classList.add('chybi')" />
+                </a>
+              ))}
+            </div>
+            <p style="margin-top:1.2rem"><a class="odkaz-dal" href={`/fotogalerie/#${album.slug}`}>Celé album ({album.fotky.length} fotografií)</a></p>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .detail { display: grid; grid-template-columns: 17rem minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .fakta { margin: 0; display: grid; gap: 1.4rem; border-top: 1px solid var(--text); padding-top: 1.3rem; position: sticky; top: 2rem; }
+  .fakta dd { margin: 0.15rem 0 0; font-size: 1.3rem; line-height: 1.3; }
+  .blok { margin-top: 3.5rem; }
+  h2.maly { font-size: 1.7rem; margin-bottom: 1.2rem; }
+  .nahledy { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 46rem; }
+  .nahledy a { display: block; aspect-ratio: 4 / 3; background: color-mix(in srgb, var(--text) 8%, transparent); overflow: hidden; }
+  .nahledy img { width: 100%; height: 100%; object-fit: cover; }
+  .nahledy a.chybi img { display: none; }
+  @media (max-width: 52rem) {
+    .detail { grid-template-columns: 1fr; }
+    .fakta { position: static; grid-template-columns: 1fr 1fr; }
+  }
+</style>

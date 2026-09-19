@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Zahlavi from '../../components/Zahlavi.astro';
+import { site } from '../../data/site';
+
+const akce = (await getCollection('akce')).sort((a, b) => +b.data.od - +a.data.od);
+const dnes = new Date();
+const nadchazejici = akce.filter((a) => +(a.data.do ?? a.data.od) >= +dnes).reverse();
+const probehle = akce.filter((a) => +(a.data.do ?? a.data.od) < +dnes);
+---
+<Base titulek="Akce" popis="Zahraniční vzdělávací exkurze, semináře a setkání Klubu Komenský. Pozvánky, programy a zprávy z cest.">
+  <Zahlavi nadpis="Akce" uvod="Zahraniční exkurze do škol, semináře pro vedení škol a setkání členů. Účastnit se mohou i nečlenové." />
+
+  <section class="sekce">
+    <div class="obal">
+      <div class="nadpis-sekce"><h2>Připravujeme</h2></div>
+      {nadchazejici.length === 0 ? (
+        <div class="prazdno">
+          <p>
+            Termín další akce zatím není vypsaný. Napište nám na
+            <a href={`mailto:${site.email}`}>{site.email}</a> a pozvánku vám pošleme, jakmile bude hotová.
+          </p>
+        </div>
+      ) : (
+        <ul class="radky">
+          {nadchazejici.map((a) => (
+            <li><a class="radek" href={`/akce/${a.id}/`}>
+              <span class="udaj">{a.data.terminText}</span>
+              <span><h3>{a.data.title}</h3><p>{a.data.perex}</p></span>
+              <span class="udaj konec">{a.data.typ}</span>
+            </a></li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+
+  <section class="sekce sekce-vyssi">
+    <div class="obal">
+      <div class="nadpis-sekce"><h2>Proběhlé akce a zprávy z cest</h2></div>
+      <ul class="radky">
+        {probehle.map((a) => (
+          <li><a class="radek" href={`/akce/${a.id}/`}>
+            <span class="udaj">{a.data.terminText}<br />{a.data.misto}</span>
+            <span><h3>{a.data.title}</h3><p>{a.data.perex}</p></span>
+            <span class="udaj konec">{a.data.typ}</span>
+          </a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .prazdno { max-width: 40rem; font-size: 1.4rem; line-height: 1.45; }
+  .prazdno p { margin: 0; }
+</style>

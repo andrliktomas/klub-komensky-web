@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import Zahlavi from '../components/Zahlavi.astro';
+import Prilohy from '../components/Prilohy.astro';
+import { site, zapisy } from '../data/site';
+---
+<Base titulek="Dokumenty a zápisy" popis="Stanovy Klubu Komenský, přihláška za člena a zápisy z valných hromad od roku 2012.">
+  <Zahlavi nadpis="Dokumenty a zápisy" uvod="Stanovy, přihláška za člena a zápisy ze všech valných hromad od roku 2012." />
+
+  <section class="sekce" id="clenstvi">
+    <div class="obal dvoje">
+      <div>
+        <h2>Členství a stanovy</h2>
+        <p class="pozn">
+          Vyplněnou přihlášku pošlete na <a href={`mailto:${site.email}`}>{site.email}</a>.
+        </p>
+      </div>
+      <Prilohy polozky={[
+        { nazev: 'Přihláška za člena Klubu Komenský', soubor: 'prihlaska-clenstvi.doc' },
+        { nazev: 'Stanovy Klubu Komenský (2015)', soubor: 'stanovy-kk-2015.doc' },
+      ]} />
+    </div>
+  </section>
+
+  <section class="sekce sekce-vyssi" id="zapisy">
+    <div class="obal dvoje">
+      <div>
+        <h2>Zápisy</h2>
+        <p class="pozn">Zápisy z valných hromad, zasedání správní rady a setkání členů.</p>
+      </div>
+      <ul class="soubory">
+        {zapisy.map((z) => (
+          <li>
+            <a href={`/soubory/${z.soubor}`} download>
+              <span class="jmeno"><span class="udaj rok">{z.rok}</span>{z.nazev}</span>
+              <span class="udaj typ">{z.soubor.split('.').pop()?.toUpperCase()}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="sekce">
+    <div class="obal dvoje">
+      <div>
+        <h2>Materiály do výuky</h2>
+        <p class="pozn">Přípravy a úkoly, které sdílejí členové klubu.</p>
+      </div>
+      <p><a class="odkaz-dal" href="/materialy/">Otevřít materiály do výuky</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .dvoje { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: clamp(1.5rem, 6vw, 6rem); align-items: start; }
+  .pozn { color: var(--text-tlumeny); margin-top: 1.2rem; max-width: 24rem; }
+  .rok { display: inline-block; width: 3.6rem; font-size: 0.95rem; }
+  @media (max-width: 52rem) { .dvoje { grid-template-columns: 1fr; } }
+</style>

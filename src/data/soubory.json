@@ -1,0 +1,30 @@
+{
+  "zdroj": "https://276551ea95.cbaul-cdnwnd.com/1f7274d1ebabcd955cdc603181da7f79/",
+  "soubory": [
+    { "cil": "stanovy-kk-2015.doc", "cesta": "200000076-33c3f34fac/stanovy KK 2015.doc" },
+    { "cil": "prihlaska-clenstvi.doc", "cesta": "200000005-4f6f250687/přihláška KK.doc" },
+
+    { "cil": "zapis-mimoradna-valna-hromada-2023.doc", "cesta": "200000117-d3e7bd3e7f/mimořádná valná hromada 2023.doc" },
+    { "cil": "zapis-valna-hromada-2023.doc", "cesta": "200000086-8d4078d40a/valná hromada 2023.doc" },
+    { "cil": "zapis-valna-hromada-2022.pdf", "cesta": "200000085-abbbeabbc1/valná hromada 2022.pdf" },
+    { "cil": "zapis-valna-hromada-2021.docx", "cesta": "200000084-331a2331a4/2021 VH Klub Komenský.docx" },
+    { "cil": "zapis-valna-hromada-2020.doc", "cesta": "200000083-7522575227/valná hromada 2020.doc" },
+    { "cil": "zapis-valna-hromada-2019.doc", "cesta": "200000080-800e48106d/zápis z valné hromady 2019.doc" },
+    { "cil": "zapis-valna-hromada-2018.doc", "cesta": "200000079-4fa9c50ab2/valná hromada 2018.doc" },
+    { "cil": "zapis-valna-hromada-2017.doc", "cesta": "200000078-157bc16743/valná hromada 2017.doc" },
+    { "cil": "zapis-valna-hromada-2016.doc", "cesta": "200000077-6186c632da/valná hromada 2016.doc" },
+    { "cil": "zapis-valna-hromada-2015.docx", "cesta": "200000075-859ca86965/Zápis z valné hromady 13 5 2015.docx" },
+    { "cil": "zapis-spravni-rada-2014.docx", "cesta": "200000043-1b7e01c78c/Zasedání správní rady KK 2014.docx" },
+    { "cil": "zapis-mikulasske-posezeni-2013.docx", "cesta": "200000042-c334ec528d/Mikulášské posezení 2013.docx" },
+    { "cil": "zapis-valna-hromada-2012.doc", "cesta": "200000040-b2b13b4a4a/Zápis z valné hromady KK 5 12 .doc" },
+
+    { "cil": "slovinsko-2025-zprava-ze-sluzebni-cesty.pdf", "cesta": "200000210-1756a1756b/Zpráva ze služební cesty (2).pdf" },
+    { "cil": "spanelsko-2024-zprava-ze-sluzebni-cesty.pdf", "cesta": "200000118-bcfb2bcfb5/Zpráva ze služební cesty.pdf" },
+    { "cil": "spanelsko-2024-otazky-a-odpovedi.pdf", "cesta": "200000208-8c6318c634/Otázky a odpovědi týkající se španělského školství.pdf" },
+    { "cil": "toskansko-2013-prihlaska.docx", "cesta": "200000041-bf736c06c2/Toskánsko- přihláška.docx" },
+    { "cil": "chorvatsko-2012-prihlaska.doc", "cesta": "200000007-ed0d4ee06c/přihláška.doc" },
+
+    { "cil": "obcanska-valka-v-usa-vyklad-a-ukoly.docx", "cesta": "200000081-5fbaa5fbac/Občanská válka v USA-v.docx" },
+    { "cil": "obcanska-valka-v-usa-reseni.docx", "cesta": "200000082-85e0185e03/USA-řešení úkolů.docx" }
+  ]
+}

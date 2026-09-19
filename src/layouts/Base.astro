@@ -1,0 +1,108 @@
+---
+import '@fontsource-variable/eb-garamond/wght.css';
+import '@fontsource-variable/eb-garamond/wght-italic.css';
+import '@fontsource-variable/hanken-grotesk/wght.css';
+import '../styles/global.css';
+import Pecet from '../components/Pecet.astro';
+import { site, menu } from '../data/site';
+
+interface Props { titulek?: string; popis?: string }
+const { titulek, popis = site.popis } = Astro.props;
+const title = titulek ? `${titulek} – ${site.kratce}` : `${site.nazev} – sdružení pracovníků školství z Brna a okolí`;
+const cesta = Astro.url.pathname;
+const kanonicka = new URL(cesta, Astro.site).href;
+---
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={popis} />
+    <link rel="canonical" href={kanonicka} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title={`Aktuality – ${site.kratce}`} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#10302a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="cs_CZ" />
+    <meta property="og:site_name" content={site.nazev} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={popis} />
+    <meta property="og:url" content={kanonicka} />
+    <meta property="og:image" content={new URL('/og.svg', Astro.site).href} />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: site.nazev,
+      email: site.email,
+      url: Astro.site?.href,
+      taxID: site.ico.replace(/\s/g, ''),
+      areaServed: 'Brno',
+    })} />
+  </head>
+  <body>
+    <a class="preskocit" href="#obsah">Přeskočit na obsah</a>
+    <header class="hlavicka na-tmavem">
+      <div class="obal hlavicka-vnitrek">
+        <a class="znacka" href="/" aria-label={`${site.nazev} – úvodní stránka`}>
+          <Pecet />
+          <span>Klub Komenský<small>z. s.</small></span>
+        </a>
+        <button class="menu-spinac" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+        <nav class="menu" id="menu" aria-label="Hlavní navigace">
+          <ul>
+            {menu.map((m) => (
+              <li><a href={m.href} aria-current={cesta.startsWith(m.href) ? 'page' : undefined}>{m.text}</a></li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="obsah"><slot /></main>
+
+    <footer class="paticka na-tmavem">
+      <div class="obal">
+        <div class="paticka-mrizka">
+          <div>
+            <a class="znacka" href="/"><Pecet /><span>Klub Komenský<small>z. s.</small></span></a>
+            <p class="citat">„{site.citat}“</p>
+            <p class="udaj">Jan Amos Komenský</p>
+          </div>
+          <div>
+            <h2>Kontakt</h2>
+            <ul>
+              <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+              <li>Datová schránka: {site.datovaSchranka}</li>
+              <li>IČO: {site.ico}</li>
+            </ul>
+          </div>
+          <div>
+            <h2>Na webu</h2>
+            <ul>
+              {menu.map((m) => <li><a href={m.href}>{m.text}</a></li>)}
+              <li><a href="/materialy/">Materiály do výuky</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="paticka-spodek udaj">
+          <span>© {new Date().getFullYear()} {site.nazev}</span>
+          <span><a href="/rss.xml">RSS aktualit</a></span>
+        </div>
+      </div>
+    </footer>
+
+    <script is:inline>
+      (function () {
+        var b = document.querySelector('.menu-spinac'), m = document.getElementById('menu');
+        if (!b || !m) return;
+        b.addEventListener('click', function () {
+          var o = m.toggleAttribute('data-otevrene');
+          b.setAttribute('aria-expanded', o ? 'true' : 'false');
+          b.textContent = o ? 'Zavřít' : 'Menu';
+        });
+      })();
+    </script>
+  </body>
+</html>

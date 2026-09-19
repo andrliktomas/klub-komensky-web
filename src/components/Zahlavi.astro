@@ -1,0 +1,20 @@
+---
+import Sit from './Sit.astro';
+interface Props { nadpis: string; uvod?: string; drobecky?: { href: string; text: string }[] }
+const { nadpis, uvod, drobecky = [] } = Astro.props;
+---
+<div class="zahlavi na-tmavem">
+  <Sit />
+  <div class="obal">
+    <div class="zahlavi-text">
+      {drobecky.length > 0 && (
+        <p class="udaj drobecky">
+          {drobecky.map((d) => (<><a href={d.href}>{d.text}</a><span aria-hidden="true"> / </span></>))}
+        </p>
+      )}
+      <h1>{nadpis}</h1>
+      {uvod && <p class="uvod">{uvod}</p>}
+      <slot />
+    </div>
+  </div>
+</div>

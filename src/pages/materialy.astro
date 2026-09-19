@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import Zahlavi from '../components/Zahlavi.astro';
+import Prilohy from '../components/Prilohy.astro';
+---
+<Base titulek="Materiály do výuky" popis="Přípravy a úkoly do výuky ke stažení – Občanská válka v USA.">
+  <Zahlavi nadpis="Materiály do výuky" uvod="Přípravy a úkoly ke stažení." drobecky={[{ href: '/dokumenty/', text: 'Dokumenty' }]} />
+  <section class="sekce">
+    <div class="obal">
+      <h2 style="margin-bottom:1.5rem">Občanská válka v USA</h2>
+      <Prilohy polozky={[
+        { nazev: 'Výklad a úkoly k tématu', soubor: 'obcanska-valka-v-usa-vyklad-a-ukoly.docx' },
+        { nazev: 'Řešení úkolů', soubor: 'obcanska-valka-v-usa-reseni.docx' },
+      ]} />
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,19 @@
+---
+// Zeměpisná síť – tichý motiv převzatý z mapy cest na úvodní stránce.
+const s = 19, lon0 = 10.5, cx = 300, top = 20, latMax = 56;
+const p = (lat: number, lon: number) => [cx + (lon - lon0) * Math.cos((lat * Math.PI) / 180) * s, top + (latMax - lat) * s];
+const poledniky: string[] = [];
+for (let lon = -15; lon <= 35; lon += 5) {
+  const b: string[] = [];
+  for (let lat = 32; lat <= 56; lat += 1) { const [x, y] = p(lat, lon); b.push(`${x.toFixed(1)},${y.toFixed(1)}`); }
+  poledniky.push('M' + b.join(' L'));
+}
+const rovnobezky: string[] = [];
+for (let lat = 35; lat <= 55; lat += 5) { const a = p(lat, -15), b = p(lat, 35); rovnobezky.push(`M${a[0].toFixed(1)},${a[1].toFixed(1)} L${b[0].toFixed(1)},${b[1].toFixed(1)}`); }
+---
+<svg class="sit" viewBox="0 0 600 480" aria-hidden="true" focusable="false">
+  <g fill="none" stroke="#cba95f" stroke-width="0.7" opacity="0.55">
+    {poledniky.map((d) => <path d={d} />)}
+    {rovnobezky.map((d) => <path d={d} />)}
+  </g>
+</svg>

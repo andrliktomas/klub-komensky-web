@@ -1,0 +1,10 @@
+# Staré adresy z Webnode → nový web
+/home/                    /               301
+/o-nas/                   /o-klubu/       301
+/zapisy/                  /dokumenty/#zapisy 301
+/pripravy-ukoly/          /materialy/     301
+/news/:slug/              /aktuality/:slug/ 301
+/archive/news/            /aktuality/     301
+/album/*                  /fotogalerie/   301
+/rss/                     /rss.xml        301
+/sitemap/                 /sitemap-index.xml 301

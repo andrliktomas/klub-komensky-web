@@ -1,0 +1,97 @@
+---
+import Base from '../layouts/Base.astro';
+import Zahlavi from '../components/Zahlavi.astro';
+import galerie from '../data/galerie.json';
+const { alba } = galerie;
+---
+<Base titulek="Fotogalerie" popis="Fotografie ze zahraničních exkurzí Klubu Komenský: Slovinsko, Španělsko, Itálie, Francie a Chorvatsko.">
+  <Zahlavi nadpis="Fotogalerie" uvod="Fotografie z našich cest do evropských škol." />
+
+  <section class="sekce">
+    <div class="obal">
+      <nav class="rejstrik udaj" aria-label="Alba">
+        {alba.map((a) => <a href={`#${a.slug}`}>{a.nazev} {a.rok}</a>)}
+      </nav>
+
+      {alba.map((a) => (
+        <div class="album" id={a.slug}>
+          <div class="nadpis-sekce">
+            <h2>{a.nazev} <span class="rok">{a.rok}</span></h2>
+            <a class="odkaz-dal" href={`/akce/${a.akce}/`}>Zpráva z cesty</a>
+          </div>
+          <ul class="mrizka">
+            {a.fotky.map((f, i) => (
+              <li>
+                <button type="button" class="foto" data-src={`/fotky/${f.cil}`} data-popis={`${a.nazev} ${a.rok}, fotografie ${i + 1} z ${a.fotky.length}`}>
+                  <img src={`/fotky/${f.cil}`} alt={`${a.nazev} ${a.rok} – fotografie ${i + 1}`} loading="lazy" decoding="async" onerror="this.closest('li').classList.add('chybi')" />
+                  <span class="udaj nahrada">Fotografie {i + 1}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <dialog class="prohlizec" aria-label="Prohlížeč fotografií">
+    <img alt="" />
+    <p class="udaj popis"></p>
+    <button type="button" class="ovl zavrit" aria-label="Zavřít">Zavřít</button>
+    <button type="button" class="ovl predchozi" aria-label="Předchozí fotografie">Předchozí</button>
+    <button type="button" class="ovl dalsi" aria-label="Další fotografie">Další</button>
+  </dialog>
+
+  <script is:inline>
+    (function () {
+      var d = document.querySelector('.prohlizec');
+      if (!d || !d.showModal) return;
+      var img = d.querySelector('img'), popis = d.querySelector('.popis');
+      var fotky = Array.prototype.slice.call(document.querySelectorAll('.foto'));
+      var i = 0;
+      function ukaz(n) {
+        i = (n + fotky.length) % fotky.length;
+        img.src = fotky[i].dataset.src;
+        img.alt = fotky[i].dataset.popis;
+        popis.textContent = fotky[i].dataset.popis;
+      }
+      fotky.forEach(function (f, n) { f.addEventListener('click', function () { ukaz(n); d.showModal(); }); });
+      d.querySelector('.zavrit').addEventListener('click', function () { d.close(); });
+      d.querySelector('.predchozi').addEventListener('click', function () { ukaz(i - 1); });
+      d.querySelector('.dalsi').addEventListener('click', function () { ukaz(i + 1); });
+      d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+      d.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') ukaz(i - 1);
+        if (e.key === 'ArrowRight') ukaz(i + 1);
+      });
+      d.addEventListener('close', function () { if (fotky[i]) fotky[i].focus(); });
+    })();
+  </script>
+</Base>
+
+<style>
+  .rejstrik { display: flex; flex-wrap: wrap; gap: 0.5rem 1.8rem; font-size: 1rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--linka); }
+  .album { padding-top: clamp(3rem, 6vw, 5rem); }
+  .album .nadpis-sekce { margin-bottom: 1.5rem; }
+  .rok { color: var(--text-tlumeny); font-feature-settings: 'lnum'; }
+  .mrizka { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); gap: 0.6rem; }
+  @media (min-width: 48rem) { .mrizka { grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); } }
+  .foto { display: block; width: 100%; aspect-ratio: 4 / 3; padding: 0; border: 0; cursor: zoom-in; overflow: hidden; position: relative; background: color-mix(in srgb, var(--text) 8%, transparent); }
+  .foto img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+  .foto:hover img { transform: scale(1.03); }
+  .nahrada { display: none; position: absolute; inset: 0; place-items: center; }
+  .chybi img { display: none; }
+  .chybi .nahrada { display: grid; }
+  .chybi .foto { cursor: default; }
+
+  .prohlizec { border: 0; padding: 0; margin: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none; background: rgba(6, 20, 17, 0.96); color: #f6f5ef; }
+  .prohlizec[open] { display: grid; grid-template-rows: 1fr auto; place-items: center; }
+  .prohlizec::backdrop { background: rgba(6, 20, 17, 0.9); }
+  .prohlizec img { max-width: min(94vw, 90rem); max-height: calc(100dvh - 7.5rem); object-fit: contain; margin-top: 3.5rem; }
+  .prohlizec .popis { color: #b4c2bb; margin: 0; padding: 1rem 1rem 1.4rem; text-align: center; }
+  .ovl { position: absolute; font-family: var(--sans); font-size: 0.95rem; font-weight: 550; color: #f6f5ef; background: rgba(10, 34, 29, 0.85); border: 1px solid rgba(246, 245, 239, 0.35); border-radius: 2px; padding: 0.6rem 1rem; cursor: pointer; }
+  .ovl:hover { background: #cba95f; color: #0a221d; border-color: #cba95f; }
+  .zavrit { top: 1rem; right: 1rem; }
+  .predchozi { left: 1rem; bottom: 1rem; }
+  .dalsi { right: 1rem; bottom: 1rem; }
+</style>
