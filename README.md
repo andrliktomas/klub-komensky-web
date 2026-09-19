@@ -6,7 +6,24 @@ Vizuál vychází z barev původního webu klubu: tmavě hnědá (`#3a1c10`), ok
 terakota (`#a9491f`) a papír (`#f5efe6`). Barvy jsou na jednom místě v `src/styles/global.css`
 (blok `:root`) – změna se propíše do celého webu včetně mapy, pečeti a záhlaví.
 
-## Nasazení (GitHub → Cloudflare Pages)
+## Nasazení – dvě možnosti
+
+### A) Automaticky z GitHubu (`.github/workflows/nasazeni.yml`)
+
+Workflow po každém pushi do `main` web postaví a nasadí na Cloudflare Pages – projekt
+při prvním běhu sám založí. Stačí do repozitáře doplnit dvě tajné proměnné
+(Settings → Secrets and variables → Actions → New repository secret):
+
+| Proměnná | Kde ji vzít |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare → My Profile → API Tokens → Create Token → šablona „Edit Cloudflare Workers“ |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare → Workers & Pages → vpravo „Account ID“ |
+
+Volitelně proměnná (Variables) `SITE_URL` s výslednou adresou webu a tajná proměnná
+`PUBLIC_WEB3FORMS_KEY` pro kontaktní formulář. Pak Actions → „Nasazení na Cloudflare
+Pages“ → Run workflow.
+
+### B) Propojením v Cloudflare (GitHub → Cloudflare Pages)
 
 1. Založte na GitHubu prázdný repozitář a nahrajte do něj tuto složku:
    ```bash
